@@ -18,106 +18,100 @@
 
   <!-- Your entire React code goes here -->
   <script type="text/babel">
-    // StAuth10244: I Smit Hareshkumar Patel, [Your Student ID] certify that this material is my original work.
-    // No other person's work has been used without due acknowledgement. I have not made my work available to anyone else.
+  // StAuth10244: I Smit Hareshkumar Patel, [Your Student ID] certify that this material is my original work.
+  // No other person's work has been used without due acknowledgement. I have not made my work available to anyone else.
 
-    function Card({ value, suit }) {
-      const suitColor = suit === "♥" || suit === "♦" ? "red" : "black";
-      return (
-        <div className="card" style={{ color: suitColor }}>
-          <div className="value">{value}</div>
-          <div className="suit">{suit}</div>
-        </div>
-      );
-    }
+  function Card({ value, suit }) {
+    const colorClass = suit === "♥" || suit === "♦" ? "red" : "black";
+    return (
+      <div className={`card ${colorClass}`}>
+        <div className="value">{value}</div>
+        <div className="suit">{suit}</div>
+      </div>
+    );
+  }
 
-    function App() {
-      const suits = ["♥", "♦", "♣", "♠"];
-      const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+  function App() {
+    const suits = ["♥", "♦", "♣", "♠"];
+    const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
-      const generateDeck = () => {
-        const deck = [];
-        for (let s of suits) {
-          for (let v of values) {
-            deck.push({ suit: s, value: v });
-          }
+    const generateDeck = () => {
+      const deck = [];
+      for (let s of suits) {
+        for (let v of values) {
+          deck.push({ suit: s, value: v });
         }
-        return deck;
-      };
+      }
+      return deck;
+    };
 
-      const [deck, setDeck] = React.useState(generateDeck());
-      const [displayed, setDisplayed] = React.useState([]);
+    const [deck, setDeck] = React.useState(generateDeck());
+    const [displayed, setDisplayed] = React.useState([]);
 
-      const handleDeckClick = () => {
-        if (deck.length === 0) return;
+    const dealCards = (count) => {
+      if (deck.length === 0) return;
 
-        const randomIndex = Math.floor(Math.random() * deck.length);
-        const randomCard = deck[randomIndex];
+      const newDeck = [...deck];
+      const dealt = [];
 
-        setDisplayed([...displayed, randomCard]);
-        setDeck(deck.filter((_, i) => i !== randomIndex));
-      };
+      for (let i = 0; i < count && newDeck.length > 0; i++) {
+        const randomIndex = Math.floor(Math.random() * newDeck.length);
+        dealt.push(newDeck[randomIndex]);
+        newDeck.splice(randomIndex, 1);
+      }
 
-      return (
-        <div style={{ padding: 20, textAlign: "center" }}>
-          <h1>React Deck of Cards</h1>
+      setDisplayed([...displayed, ...dealt]);
+      setDeck(newDeck);
+    };
 
-          {deck.length > 0 ? (
-            <div
-              onClick={handleDeckClick}
-              className="deck"
-              style={{
-                width: "120px",
-                height: "160px",
-                margin: "20px auto",
-                background: "green",
-                borderRadius: "10px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              DECK ({deck.length})
-            </div>
-          ) : (
-            <div
-              style={{
-                width: "120px",
-                height: "160px",
-                margin: "20px auto",
-                border: "2px dashed gray",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "bold",
-              }}
-            >
-              No cards remaining
-            </div>
-          )}
+    const resetDeck = () => {
+      setDeck(generateDeck());
+      setDisplayed([]);
+    };
 
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-              justifyContent: "center",
-              marginTop: "20px",
-            }}
-          >
-            {displayed.map((card, index) => (
-              <Card key={index} value={card.value} suit={card.suit} />
-            ))}
+    return (
+      <div>
+        <h1>React Deck of Cards</h1>
+
+        {deck.length > 0 ? (
+          <div className="deck" onClick={() => dealCards(1)}>
+            DECK ({deck.length})
           </div>
-        </div>
-      );
-    }
+        ) : (
+          <div className="no-cards">No cards remaining</div>
+        )}
 
-    ReactDOM.render(<App />, document.getElementById("root"));
-  </script>
+        {/* BUTTONS */}
+        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "12px" }}>
+          <button onClick={() => dealCards(5)} style={btnStyle}>Deal 5</button>
+          <button onClick={() => dealCards(7)} style={btnStyle}>Deal 7</button>
+          <button onClick={resetDeck} style={{ ...btnStyle, background: "#ff5252" }}>Reset</button>
+        </div>
+
+        {/* DISPLAYED CARDS */}
+        <div className="card-container">
+          {displayed.map((card, index) => (
+            <Card key={index} value={card.value} suit={card.suit} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const btnStyle = {
+    padding: "10px 18px",
+    fontSize: "16px",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    background: "#00bcd4",
+    color: "#fff",
+    fontWeight: "bold",
+    transition: "all 0.2s ease",
+  };
+
+  ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+
 </body>
 </html>
