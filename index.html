@@ -48,7 +48,18 @@
         }
       }
       return deck;
+     
+
+
     };
+    const addWildcard = () => {
+  const randomSuit = suits[Math.floor(Math.random() * suits.length)];
+  const randomValue = values[Math.floor(Math.random() * values.length)];
+
+  const wildcardCard = { suit: randomSuit, value: randomValue };
+  setDisplayed([...displayed, wildcardCard]);
+  setPickedIndex(null);
+};
 
     const [deck, setDeck] = React.useState(generateDeck());
     const [displayed, setDisplayed] = React.useState([]);
@@ -124,12 +135,13 @@
 
         {/* CONTROL BUTTONS */}
         <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "12px", flexWrap: "wrap" }}>
-          <button onClick={() => dealCards(5)} style={btnStyle}>Deal 5</button>
-          <button onClick={() => dealCards(7)} style={btnStyle}>Deal 7</button>
-          <button onClick={resetDeck} style={{ ...btnStyle, background: "#ff5252" }}>Reset</button>
-          <button onClick={tossCard} style={{ ...btnStyle, background: "#ffa000" }}>Toss</button>
-          <button onClick={regroup} style={{ ...btnStyle, background: "#9c27b0" }}>Regroup</button>
-        </div>
+  <button onClick={() => dealCards(5)} style={btnStyle}>Deal 5</button>
+  <button onClick={() => dealCards(7)} style={btnStyle}>Deal 7</button>
+  <button onClick={resetDeck} style={{ ...btnStyle, background: "#ff5252" }}>Reset</button>
+  <button onClick={tossCard} style={{ ...btnStyle, background: "#ffa000" }}>Toss</button>
+  <button onClick={regroup} style={{ ...btnStyle, background: "#9c27b0" }}>Regroup</button>
+  <button onClick={addWildcard} style={{ ...btnStyle, background: "#607d8b" }}>Wildcard</button>
+</div>
 
         {/* DISPLAYED CARDS */}
         <div className="card-container">
