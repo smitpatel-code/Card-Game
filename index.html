@@ -5,6 +5,100 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>A3 — React Deck of Cards</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Dark theme & styling */
+
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-top: 20px;
+      color: #ffffff;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 80px;
+      height: 120px;
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .card.red {
+      color: #ff5252;
+    }
+
+    .card.black {
+      color: #ffffff;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .deck, .no-cards {
+      width: 120px;
+      height: 160px;
+      margin: 20px auto;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .deck {
+      background-color: #2e7d32;
+      color: white;
+    }
+
+    .no-cards {
+      border: 2px dashed #757575;
+      color: #bdbdbd;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      filter: brightness(1.2);
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>
@@ -12,167 +106,139 @@
   <!-- React and ReactDOM -->
   <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-
-  <!-- Babel -->
-   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="text/babel">
-  // StAuth10244: I Smit Hareshkumar Patel, [Your Student ID] certify that this material is my original work.
-  // No other person's work has been used without due acknowledgement. I have not made my work available to anyone else.
+    // StAuth10244: I Smit Hareshkumar Patel, [Your Student ID] certify that this material is my original work.
+    // No other person's work has been used without due acknowledgement. I have not made my work available to anyone else.
 
-  function Card({ value, suit, isPicked, onClick }) {
-    const colorClass = suit === "♥" || suit === "♦" ? "red" : "black";
-    return (
-      <div
-        className={`card ${colorClass}`}
-        onClick={onClick}
-        style={{
-          border: isPicked ? "3px solid #00e676" : undefined,
-        }}
-      >
-        <div className="value">{value}</div>
-        <div className="suit">{suit}</div>
-      </div>
-    );
-  }
+    function Card({ value, suit, isPicked, onClick }) {
+      const colorClass = suit === "♥" || suit === "♦" ? "red" : "black";
+      return (
+        <div
+          className={`card ${colorClass}`}
+          onClick={onClick}
+          style={{ border: isPicked ? "3px solid #00e676" : undefined }}
+        >
+          <div className="value">{value}</div>
+          <div className="suit">{suit}</div>
+        </div>
+      );
+    }
 
-  function App() {
-    const suits = ["♥", "♦", "♣", "♠"];
-    const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    function App() {
+      const suits = ["♥", "♦", "♣", "♠"];
+      const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
-    const generateDeck = () => {
-      const deck = [];
-      for (let s of suits) {
-        for (let v of values) {
-          deck.push({ suit: s, value: v });
+      const generateDeck = () => {
+        const deck = [];
+        for (let s of suits) {
+          for (let v of values) {
+            deck.push({ suit: s, value: v });
+          }
         }
-      }
-      return deck;
-     
+        return deck;
+      };
 
+      const [deck, setDeck] = React.useState(generateDeck());
+      const [displayed, setDisplayed] = React.useState([]);
+      const [pickedIndex, setPickedIndex] = React.useState(null);
 
-    };
-    const addWildcard = () => {
-  const randomSuit = suits[Math.floor(Math.random() * suits.length)];
-  const randomValue = values[Math.floor(Math.random() * values.length)];
-
-  const wildcardCard = { suit: randomSuit, value: randomValue };
-  setDisplayed([...displayed, wildcardCard]);
-  setPickedIndex(null);
-};
-
-    const [deck, setDeck] = React.useState(generateDeck());
-    const [displayed, setDisplayed] = React.useState([]);
-    const [pickedIndex, setPickedIndex] = React.useState(null);
-
-    const dealCards = (count) => {
-      if (deck.length === 0) return;
-
-      const newDeck = [...deck];
-      const dealt = [];
-
-      for (let i = 0; i < count && newDeck.length > 0; i++) {
-        const randomIndex = Math.floor(Math.random() * newDeck.length);
-        dealt.push(newDeck[randomIndex]);
-        newDeck.splice(randomIndex, 1);
-      }
-
-      setDisplayed([...displayed, ...dealt]);
-      setDeck(newDeck);
-      setPickedIndex(null);
-    };
-
-    const resetDeck = () => {
-      setDeck(generateDeck());
-      setDisplayed([]);
-      setPickedIndex(null);
-    };
-
-    const handleCardClick = (index) => {
-      if (pickedIndex === null) {
-        // Pick the card
-        setPickedIndex(index);
-      } else if (pickedIndex === index) {
-        // Unpick the same card
+      const dealCards = (count) => {
+        if (deck.length === 0) return;
+        const newDeck = [...deck];
+        const dealt = [];
+        for (let i = 0; i < count && newDeck.length > 0; i++) {
+          const randomIndex = Math.floor(Math.random() * newDeck.length);
+          dealt.push(newDeck[randomIndex]);
+          newDeck.splice(randomIndex, 1);
+        }
+        setDisplayed([...displayed, ...dealt]);
+        setDeck(newDeck);
         setPickedIndex(null);
-      } else {
-        // Swap picked card with clicked card
-        const newDisplayed = [...displayed];
-        [newDisplayed[pickedIndex], newDisplayed[index]] = [newDisplayed[index], newDisplayed[pickedIndex]];
+      };
+
+      const resetDeck = () => {
+        setDeck(generateDeck());
+        setDisplayed([]);
+        setPickedIndex(null);
+      };
+
+      const handleCardClick = (index) => {
+        if (pickedIndex === null) {
+          setPickedIndex(index);
+        } else if (pickedIndex === index) {
+          setPickedIndex(null);
+        } else {
+          const newDisplayed = [...displayed];
+          [newDisplayed[pickedIndex], newDisplayed[index]] = [newDisplayed[index], newDisplayed[pickedIndex]];
+          setDisplayed(newDisplayed);
+          setPickedIndex(null);
+        }
+      };
+
+      const tossCard = () => {
+        if (pickedIndex === null) return;
+        const newDisplayed = displayed.filter((_, i) => i !== pickedIndex);
         setDisplayed(newDisplayed);
         setPickedIndex(null);
-      }
-    };
+      };
 
-    const tossCard = () => {
-      if (pickedIndex === null) return;
-      const newDisplayed = displayed.filter((_, i) => i !== pickedIndex);
-      setDisplayed(newDisplayed);
-      setPickedIndex(null);
-    };
+      const regroup = () => {
+        const newDisplayed = [...displayed];
+        for (let i = newDisplayed.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newDisplayed[i], newDisplayed[j]] = [newDisplayed[j], newDisplayed[i]];
+        }
+        setDisplayed(newDisplayed);
+        setPickedIndex(null);
+      };
 
-    const regroup = () => {
-      const newDisplayed = [...displayed];
-      for (let i = newDisplayed.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newDisplayed[i], newDisplayed[j]] = [newDisplayed[j], newDisplayed[i]];
-      }
-      setDisplayed(newDisplayed);
-      setPickedIndex(null);
-    };
+      const addWildcard = () => {
+        const randomSuit = suits[Math.floor(Math.random() * suits.length)];
+        const randomValue = values[Math.floor(Math.random() * values.length)];
+        const wildcardCard = { suit: randomSuit, value: randomValue };
+        setDisplayed([...displayed, wildcardCard]);
+        setPickedIndex(null);
+      };
 
-    return (
-      <div>
-        <h1>React Deck of Cards</h1>
+      return (
+        <div>
+          <h1>React Deck of Cards</h1>
 
-        {deck.length > 0 ? (
-          <div className="deck" onClick={() => dealCards(1)}>
-            DECK ({deck.length})
+          {deck.length > 0 ? (
+            <div className="deck" onClick={() => dealCards(1)}>
+              DECK ({deck.length})
+            </div>
+          ) : (
+            <div className="no-cards">No cards remaining</div>
+          )}
+
+          <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "12px", flexWrap: "wrap" }}>
+            <button onClick={() => dealCards(5)} style={{ background: "#00bcd4" }}>Deal 5</button>
+            <button onClick={() => dealCards(7)} style={{ background: "#00bcd4" }}>Deal 7</button>
+            <button onClick={resetDeck} style={{ background: "#ff5252" }}>Reset</button>
+            <button onClick={tossCard} style={{ background: "#ffa000" }}>Toss</button>
+            <button onClick={regroup} style={{ background: "#9c27b0" }}>Regroup</button>
+            <button onClick={addWildcard} style={{ background: "#607d8b" }}>Wildcard</button>
           </div>
-        ) : (
-          <div className="no-cards">No cards remaining</div>
-        )}
 
-        {/* CONTROL BUTTONS */}
-        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "12px", flexWrap: "wrap" }}>
-  <button onClick={() => dealCards(5)} style={btnStyle}>Deal 5</button>
-  <button onClick={() => dealCards(7)} style={btnStyle}>Deal 7</button>
-  <button onClick={resetDeck} style={{ ...btnStyle, background: "#ff5252" }}>Reset</button>
-  <button onClick={tossCard} style={{ ...btnStyle, background: "#ffa000" }}>Toss</button>
-  <button onClick={regroup} style={{ ...btnStyle, background: "#9c27b0" }}>Regroup</button>
-  <button onClick={addWildcard} style={{ ...btnStyle, background: "#607d8b" }}>Wildcard</button>
-</div>
-
-        {/* DISPLAYED CARDS */}
-        <div className="card-container">
-          {displayed.map((card, index) => (
-            <Card
-              key={index}
-              value={card.value}
-              suit={card.suit}
-              isPicked={pickedIndex === index}
-              onClick={() => handleCardClick(index)}
-            />
-          ))}
+          <div className="card-container">
+            {displayed.map((card, index) => (
+              <Card
+                key={index}
+                value={card.value}
+                suit={card.suit}
+                isPicked={pickedIndex === index}
+                onClick={() => handleCardClick(index)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  const btnStyle = {
-    padding: "10px 18px",
-    fontSize: "16px",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    background: "#00bcd4",
-    color: "#fff",
-    fontWeight: "bold",
-    transition: "all 0.2s ease",
-  };
-
-  ReactDOM.render(<App />, document.getElementById("root"));
-</script>
-
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
 </body>
 </html>

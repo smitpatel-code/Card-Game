@@ -1,39 +1,17 @@
+/* css/styles.css */
 body {
-  background-color: #121212; /* dark theme */
-  color: #fff;
+  background-color: #121212; /* dark background */
+  color: #ffffff; /* default text color */
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
   text-align: center;
-}
-
-.deck {
-  width: 120px;
-  height: 160px;
-  margin: 20px auto;
-  background: #1e7e34; /* dark green */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.no-cards {
-  width: 120px;
-  height: 160px;
-  margin: 20px auto;
-  border: 2px dashed gray;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
 }
 
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   margin-top: 20px;
 }
@@ -42,16 +20,16 @@ body {
   width: 80px;
   height: 120px;
   border-radius: 8px;
-  background: #222; /* dark card background */
+  background-color: #1e1e1e; /* darker card background */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-weight: bold;
   font-size: 20px;
-  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.5);
-  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .card.red {
@@ -59,5 +37,34 @@ body {
 }
 
 .card.black {
-  color: #fff;
+  color: #ffffff;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+}
+
+.deck, .no-cards {
+  width: 120px;
+  height: 160px;
+  margin: 20px auto;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.deck {
+  background-color: #2e7d32; /* green deck */
+  color: white;
+}
+
+.no-cards {
+  border: 2px dashed #757575;
+  color: #bdbdbd;
 }
