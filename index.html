@@ -14,17 +14,22 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
 
   <!-- Babel -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Your entire React code goes here -->
   <script type="text/babel">
   // StAuth10244: I Smit Hareshkumar Patel, [Your Student ID] certify that this material is my original work.
   // No other person's work has been used without due acknowledgement. I have not made my work available to anyone else.
 
-  function Card({ value, suit }) {
+  function Card({ value, suit, isPicked, onClick }) {
     const colorClass = suit === "♥" || suit === "♦" ? "red" : "black";
     return (
-      <div className={`card ${colorClass}`}>
+      <div
+        className={`card ${colorClass}`}
+        onClick={onClick}
+        style={{
+          border: isPicked ? "3px solid #00e676" : undefined,
+        }}
+      >
         <div className="value">{value}</div>
         <div className="suit">{suit}</div>
       </div>
@@ -47,6 +52,7 @@
 
     const [deck, setDeck] = React.useState(generateDeck());
     const [displayed, setDisplayed] = React.useState([]);
+    const [pickedIndex, setPickedIndex] = React.useState(null);
 
     const dealCards = (count) => {
       if (deck.length === 0) return;
@@ -62,11 +68,46 @@
 
       setDisplayed([...displayed, ...dealt]);
       setDeck(newDeck);
+      setPickedIndex(null);
     };
 
     const resetDeck = () => {
       setDeck(generateDeck());
       setDisplayed([]);
+      setPickedIndex(null);
+    };
+
+    const handleCardClick = (index) => {
+      if (pickedIndex === null) {
+        // Pick the card
+        setPickedIndex(index);
+      } else if (pickedIndex === index) {
+        // Unpick the same card
+        setPickedIndex(null);
+      } else {
+        // Swap picked card with clicked card
+        const newDisplayed = [...displayed];
+        [newDisplayed[pickedIndex], newDisplayed[index]] = [newDisplayed[index], newDisplayed[pickedIndex]];
+        setDisplayed(newDisplayed);
+        setPickedIndex(null);
+      }
+    };
+
+    const tossCard = () => {
+      if (pickedIndex === null) return;
+      const newDisplayed = displayed.filter((_, i) => i !== pickedIndex);
+      setDisplayed(newDisplayed);
+      setPickedIndex(null);
+    };
+
+    const regroup = () => {
+      const newDisplayed = [...displayed];
+      for (let i = newDisplayed.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newDisplayed[i], newDisplayed[j]] = [newDisplayed[j], newDisplayed[i]];
+      }
+      setDisplayed(newDisplayed);
+      setPickedIndex(null);
     };
 
     return (
@@ -81,17 +122,25 @@
           <div className="no-cards">No cards remaining</div>
         )}
 
-        {/* BUTTONS */}
-        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "12px" }}>
+        {/* CONTROL BUTTONS */}
+        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "12px", flexWrap: "wrap" }}>
           <button onClick={() => dealCards(5)} style={btnStyle}>Deal 5</button>
           <button onClick={() => dealCards(7)} style={btnStyle}>Deal 7</button>
           <button onClick={resetDeck} style={{ ...btnStyle, background: "#ff5252" }}>Reset</button>
+          <button onClick={tossCard} style={{ ...btnStyle, background: "#ffa000" }}>Toss</button>
+          <button onClick={regroup} style={{ ...btnStyle, background: "#9c27b0" }}>Regroup</button>
         </div>
 
         {/* DISPLAYED CARDS */}
         <div className="card-container">
           {displayed.map((card, index) => (
-            <Card key={index} value={card.value} suit={card.suit} />
+            <Card
+              key={index}
+              value={card.value}
+              suit={card.suit}
+              isPicked={pickedIndex === index}
+              onClick={() => handleCardClick(index)}
+            />
           ))}
         </div>
       </div>
